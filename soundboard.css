@@ -1,0 +1,128 @@
+#soundboardtitle {
+    font-size: 50px;
+    color: #000000;
+    text-align: center;
+    margin-top: 20px;
+    font-family: "Quicksand", sans-serif;
+}
+
+
+
+#soundboardhomepagebutton {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4f8cff, #1e5ed9);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#soundboardhomepagebutton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #5f9cff, #2d6df0);
+}
+
+#soundboardhomepagebutton:active {
+    transform: translateY(0px);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+}
+
+
+
+
+
+
+
+
+
+.sound-btn {
+    width: 100px;          /* make width & height equal */
+    height: 100px;
+    border-radius: 50%;   /* makes it circular */
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+.sound-btn:hover {
+    transform: translateY(-2px);
+}
+.sound-btn:active {
+    transform: translateY(0);
+}
+
+
+
+.red-btn {
+    background: linear-gradient(135deg, #ff7b6b, #ff4c4c);
+}
+.red-btn:hover {
+    background: linear-gradient(135deg, #ff8b7b, #ff5c5c);
+}
+
+
+.green-btn {
+    background: linear-gradient(135deg, #6bff95, #2ee677);
+}
+.green-btn:hover {
+    background: linear-gradient(135deg, #7bff9f, #3ef687);
+}
+
+
+.blue-btn {
+    background: linear-gradient(135deg, #6bb1ff, #4c72ff);
+}
+.blue-btn:hover {
+    background: linear-gradient(135deg, #7bc1ff, #5c82ff);
+}
+
+
+.brown-btn {
+    background: linear-gradient(135deg, #a0774b, #6b4a2d);
+}
+.brown-btn:hover {
+    background: linear-gradient(135deg, #b5875a, #7a5635);
+}
+
+.yellow-btn {
+    background: linear-gradient(135deg, #ffea6b, #ffd42e);
+}
+.yellow-btn:hover {
+    background: linear-gradient(135deg, #fff07b, #ffe63e);
+}
+
+
+
+.purple-btn {
+    background: linear-gradient(135deg, #c76bff, #9e4cff);
+}
+.purple-btn:hover {
+    background: linear-gradient(135deg, #d57bff, #ae5cff);
+}
+
+
+.orange-btn {
+    background: linear-gradient(135deg, #ff9f6b, #ff772e);
+}
+.orange-btn:hover {
+    background: linear-gradient(135deg, #ffaf7b, #ff873e);
+}
+
+
+
+.gray-btn {
+    background: linear-gradient(135deg, #a0a0a0, #707070);
+}
+.gray-btn:hover {
+    background: linear-gradient(135deg, #b0b0b0, #808080);
+}

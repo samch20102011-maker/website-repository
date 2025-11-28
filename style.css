@@ -1,0 +1,74 @@
+#soundboardbutton {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4f8cff, #1e5ed9);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#soundboardbutton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #5f9cff, #2d6df0);
+}
+
+#soundboardbutton:active {
+    transform: translateY(0px);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+}
+
+#dihifierbutton {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4f8cff, #1e5ed9);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#dihifierbutton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #5f9cff, #2d6df0);
+}
+
+#dihifierbutton:active {
+    transform: translateY(0px);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+}
+
+
+
+
+#glCanvas {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:auto;
+}
+
+#homepagetitle {
+    font-size: 50px;
+    color: #000000;
+    text-align: center;
+    margin-top: 20px;
+    font-family: "Quicksand", sans-serif;
+}
+
+#cubecaption {
+    font-size: 20px;
+    color: #333333;
+    text-align: center;
+    font-family: "Quicksand", sans-serif;
+}
