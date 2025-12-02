@@ -6,7 +6,13 @@
     font-family: "Quicksand", sans-serif;
 }
 
-
+.sound-grid {
+    display: flex;
+    gap: 15px;       /* space between buttons */
+    flex-wrap: wrap; /* allows wrapping if screen is small */
+    justify-content: center; /* centers the row */
+    margin-top: 20px;
+}
 
 #soundboardhomepagebutton {
     padding: 12px 20px;
