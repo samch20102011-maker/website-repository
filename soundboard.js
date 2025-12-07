@@ -25,6 +25,16 @@ sendBtn.addEventListener("click", async () => {
 
   else if (text.length > 30) return alert("Suggestion is too long! (Max 30 characters)");
 
+  // --- NEW CONFIRMATION POPUP ---
+  const ok = confirm(
+    "Joke suggestions such as random text will be deleted.\n" +
+    "By proceeding, you confirm this is a valid suggestion."
+  );
+
+  if (!ok) {
+    return; // user pressed "Cancel"
+  }
+
   try {
     await addDoc(collection(db, "suggestions"), {
       text,
