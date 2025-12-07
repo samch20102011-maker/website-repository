@@ -209,10 +209,11 @@ label {
 }
 
 .yellow-btn {
-    background: linear-gradient(135deg, #ffea6b, #ffd42e);
+    background: linear-gradient(135deg, #f5d64a, #e6b800);
 }
+
 .yellow-btn:hover {
-    background: linear-gradient(135deg, #fff07b, #ffe63e);
+    background: linear-gradient(135deg, #f9de5c, #eec200);
 }
 
 

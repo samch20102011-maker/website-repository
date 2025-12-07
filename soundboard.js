@@ -105,6 +105,8 @@ const sounds = {
   "knock-3d": "sounds/knock-3d.mp3",
   "we-are-charlie-kirk": "sounds/we-are-charlie-kirk.mp3",
   "tung-tung-sahur-song": "sounds/tung-tung-sahur-song.mp3",
+  "wobbly-wiggly": "sounds/wobbly-wiggly.mp3",
+  "tung-tung-tung-sahur-ta-ta-ta": "sounds/tung-tung-tung-sahur-ta-ta-ta.mp3"
 };
 
 // Attach event listeners
