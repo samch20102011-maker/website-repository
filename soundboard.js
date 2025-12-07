@@ -55,6 +55,10 @@ document.getElementById("fahhh-pump-sound").addEventListener("click", function()
     playSound("sounds/fahhh-pump-sound.mp3");
 });
 
+document.getElementById("knock-3d").addEventListener("click", function() {
+    playSound("sounds/knock-3d.mp3");
+});
+
 document.getElementById("stop-all-sounds").addEventListener("click", function() {
     playingAudios.forEach(audio => {
         audio.pause();      
