@@ -103,7 +103,8 @@ const sounds = {
   "what-is-this-diddy-blud": "sounds/what-is-this-diddy-blud-doing-on-the.mp3",
   "fahhh-pump-sound": "sounds/fahhh-pump-sound.mp3",
   "knock-3d": "sounds/knock-3d.mp3",
-  "we-are-charlie-kirk": "sounds/we-are-charlie-kirk.mp3"
+  "we-are-charlie-kirk": "sounds/we-are-charlie-kirk.mp3",
+  "tung-tung-sahur-song": "sounds/tung-tung-sahur-song.mp3",
 };
 
 // Attach event listeners
