@@ -1,6 +1,6 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-  <html lang="en">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Soundboard</title>
@@ -11,9 +11,19 @@
   <button id="soundboardhomepagebutton" onclick="location.href='index.html'">Homepage</button>
   <br><br>
   <button id="stop-all-sounds" class="sound-btn gray-btn">STOP ALL</button>
-  <br><br>
-  <div class="sound-grid">
 
+  <br><br>
+  
+  <div>
+    <label for="suggestionInput">Type a suggestion:</label>
+    <input type="text" id="suggestionInput" placeholder="Type here..." />
+    <button id="sendSuggestionBtn">Submit</button>
+  </div>
+
+
+  <br><br>
+
+  <div class="sound-grid">
     <button class="sound-btn red-btn" id="actually-good-fahhh">ACTUALLY GOOD FAHHH</button>
     <button class="sound-btn green-btn" id="please-speed-i-need-this">Please Speed I Need This</button>
     <button class="sound-btn blue-btn" id="metal-pipe-falling-sound">Metal Pipe Falling Sound</button>
@@ -21,5 +31,10 @@
     <button class="sound-btn green-btn" id="what-is-this-diddy-blud">WHAT IS THIS DIDDY BLUD</button>
     <button class="sound-btn red-btn" id="fahhh-pump-sound">fahhh pump sound</button>
 </div>
-  <script src="soundboard.js"></script>
+
+
+
+
+
+  <script type="module" src="soundboard.js"></script>
 </body></html>
