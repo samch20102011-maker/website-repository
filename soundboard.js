@@ -23,6 +23,8 @@ sendBtn.addEventListener("click", async () => {
   const text = suggestionInput.value.trim();
   if (!text) return alert("Please enter a suggestion!");
 
+  else if (text.length > 30) return alert("Suggestion is too long! (Max 30 characters)");
+
   try {
     await addDoc(collection(db, "suggestions"), {
       text,
