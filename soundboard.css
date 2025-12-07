@@ -43,6 +43,78 @@
 
 
 
+/* Suggestion label styling (same as Dihifier) */
+label {
+    font-family: "Quicksand", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3d7b;
+    text-align: center;
+    display: block;       /* ensures proper spacing */
+    margin-bottom: 10px;  /* space below label before input */
+}
+
+/* Wrap the suggestion input + button in a container */
+#suggestionContainer {
+    display: flex;
+    flex-direction: column;  /* stack input above button */
+    align-items: center;     /* center horizontally */
+    gap: 15px;               /* space between input and button */
+    margin-top: 20px;        /* space from above elements */
+    margin-bottom: 30px;     /* space below container */
+}
+
+/* Label styling */
+#suggestionContainer label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3d7b;
+    text-align: center;
+    display: block;
+}
+
+/* Input styling */
+#suggestionContainer input {
+    width: 300px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #4f8cff;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+#suggestionContainer input:focus {
+    border-color: #1e5ed9;
+    box-shadow: 0 0 8px rgba(79,140,255,0.5);
+}
+
+/* Submit button styling */
+#suggestionContainer button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ff7b6b, #ff4c4c);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#suggestionContainer button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ff8b7b, #ff5c5c);
+}
+
+#suggestionContainer button:active {
+    transform: translateY(0);
+}
+
+
+
+
+
 
 
 
