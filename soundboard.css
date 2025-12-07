@@ -117,18 +117,20 @@ label {
 
 
 #suggestions-box {
-  position: fixed;
+  position: static;        /* stays in the bottom corner of screen */
+  margin-left: auto;
   bottom: 20px;
   right: 20px;
   width: 250px;
-  max-height: 300px;
-  overflow-y: auto;
+  max-height: 250px;      /* <<< FIX: limit height so scrolling happens inside */
+  overflow-y: auto;       /* <<< scrolling happens IN THE BOX */
   background: white;
   border-radius: 8px;
   padding: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   font-family: Arial;
 }
+
 
 #suggestions-box h3 {
   margin-top: 0;

@@ -41,7 +41,7 @@ sendBtn.addEventListener("click", async () => {
 // DISPLAY RECENT SUGGESTIONS
 // -----------------------------
 const suggestionsRef = collection(db, "suggestions");
-const q = query(suggestionsRef, orderBy("timestamp", "desc"), limit(10));
+const q = query(suggestionsRef, orderBy("timestamp", "desc"));
 
 onSnapshot(q, (snapshot) => {
   const list = document.getElementById("suggestions-list");
