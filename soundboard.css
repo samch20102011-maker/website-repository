@@ -75,6 +75,38 @@
 
 
 
+#volume-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#volumeSlider {
+    width: 300px;
+}
+
+.reset-volume {
+    padding: 10px 18px;    /* bigger clickable area */
+    font-size: 16px;       /* larger text */
+    margin-left: 10px;
+    border-radius: 6px;
+    background: #f44336;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.reset-volume:hover {
+    background: #d9362c;
+}
+
+.volume-wrapper {
+    display: flex;
+    flex-direction: column; /* stack label above slider */
+    align-items: center;    /* center horizontally */
+    gap: 6px;               /* space between label & slider */
+}
+
+
 
 
 /* Suggestion label styling (same as Dihifier) */

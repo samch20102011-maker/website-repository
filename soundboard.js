@@ -24,6 +24,31 @@ const playSelectedBtn = document.getElementById("play-selected");
 const stopBtn = document.getElementById("stop-all-sounds");
 const selectionMessage = document.getElementById("selection-mode-center-message");
 
+const volumeSlider = document.getElementById("volumeSlider");
+const volumeValue = document.getElementById("volumeValue");
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const compressor = audioCtx.createDynamicsCompressor();
+compressor.threshold.value = -6;
+compressor.knee.value = 20;
+compressor.ratio.value = 2;
+compressor.attack.value = 0.01;
+compressor.release.value = 0.1;
+
+const limiter = audioCtx.createDynamicsCompressor();
+limiter.threshold.value = -3;
+limiter.knee.value = 0;
+limiter.ratio.value = 20;
+limiter.attack.value = 0.001;
+limiter.release.value = 0.05;
+
+const gainNode = audioCtx.createGain();
+gainNode.gain.value = 1.0;
+
+
+let globalVolume = 1.0; // default 1x (100%)
+
 // -----------------------------
 // FIREBASE SUGGESTIONS
 // -----------------------------
@@ -78,6 +103,7 @@ onSnapshot(suggestionsQuery, (snapshot) => {
 // -----------------------------
 const sounds = {
     "actually-good-fahhh": "sounds/actually-good-fahhhh-sfx.mp3",
+    "please-speed-i-need-this": "sounds/please-speed-i-need-this.mp3",
     "metal-pipe-falling-sound": "sounds/metal-pipe-falling-sound-effect.mp3",
     "long-brain-fart": "sounds/long-brain-fart.mp3",
     "what-is-this-diddy-blud": "sounds/what-is-this-diddy-blud-doing-on-the.mp3",
@@ -89,14 +115,43 @@ const sounds = {
     "brainrot-rap": "sounds/brainrot-rap.mp3",
     "high-pitch-sound": "sounds/high-pitch-sound.mp3",
     "wet-fart": "sounds/wet-fart.mp3",
-    "fart-with-reverb": "sounds/fart-with-reverb.mp3"
+    "fart-with-reverb": "sounds/fart-with-reverb.mp3",
+    "domer-the-simpsons": "sounds/domer-the-simpsons.mp3",
+    "who-invited-this-kid-bruh": "sounds/who-invited-this-kid-bruh.mp3",
+    "why-did-you-redeem-it": "sounds/why-did-you-redeem-it.mp3"
 };
 
 const playingAudios = [];
+
 function playSound(src) {
     const audio = new Audio(src);
+    const track = audioCtx.createMediaElementSource(audio);
+
+    // Connect the full pipeline **in order**
+    track.connect(compressor);
+    compressor.connect(limiter);
+    limiter.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    // Apply volume
+    gainNode.gain.value = globalVolume;
+
     audio.play();
     playingAudios.push(audio);
+
+    // Easter Egg
+    if (src.includes("please-speed-i-need-this")) {
+        const interval = setInterval(() => {
+            if (audio.currentTime >= 6.5 && audio.currentTime <= 8) {
+                document.getElementById("easterEggImage").style.opacity = "1";
+                setTimeout(() => {
+                    document.getElementById("easterEggImage").style.opacity = "0";
+                }, 2000);
+                clearInterval(interval);
+            }
+            if (audio.ended) clearInterval(interval);
+        }, 100);
+    }
 }
 
 // Stop all sounds
@@ -104,6 +159,29 @@ stopBtn.addEventListener("click", () => {
     playingAudios.forEach(a => { a.pause(); a.currentTime = 0; });
     playingAudios.length = 0;
 });
+
+// -----------------------------
+// VOLUME SYSTEM
+// -----------------------------
+
+volumeSlider.addEventListener("input", () => {
+    globalVolume = volumeSlider.value / 100; // 0.0–5.0
+    volumeValue.textContent = `Volume: ${volumeSlider.value}%`;
+
+    gainNode.gain.value = globalVolume; // this can go beyond 1.0
+});
+
+const resetVolumeBtn = document.getElementById("resetVolumeBtn");
+
+resetVolumeBtn.addEventListener("click", () => {
+    volumeSlider.value = 100;      // reset slider
+    globalVolume = 1.0;            // reset JS value
+    volumeValue.textContent = `Volume: ${volumeSlider.value}%`;
+    gainNode.gain.value = 1.0;     // instantly update actual volume
+});
+
+
+
 
 // -----------------------------
 // SELECTION SYSTEM
@@ -123,23 +201,7 @@ function selectionHandler(e) {
         if (btn.classList.contains("selected")) selectedButtons.add(btnId);
         else selectedButtons.delete(btnId);
     } else {
-        // Normal click
-        if (btnId === "please-speed-i-need-this") {
-            const audio = new Audio("sounds/please-speed-i-need-this.mp3");
-            audio.play();
-            playingAudios.push(audio);
-
-            const interval = setInterval(() => {
-                if (audio.currentTime >= 6.5 && audio.currentTime <= 8) {
-                    document.getElementById("easterEggImage").style.opacity = "1";
-                    setTimeout(() => document.getElementById("easterEggImage").style.opacity = "0", 2000);
-                    clearInterval(interval);
-                }
-                if (audio.ended) clearInterval(interval);
-            }, 100);
-        } else {
-            playSound(sounds[btnId]);
-        }
+        playSound(sounds[btnId]);
     }
 }
 
