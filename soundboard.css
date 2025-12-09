@@ -43,6 +43,40 @@
 
 
 
+
+.easter-egg-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.easter-egg-text {
+  position: absolute;
+  top: -12px;        /* Move text above button */
+  left: 6%;
+  transform: translateX(-50%);
+  transform: translateY(-50%);
+  font-size: 18px;
+  font-family: "Quicksand", sans-serif;
+  color: #000000;
+  pointer-events: none; /* So it doesn't block clicks */
+}
+
+#easterEggImage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+
+
+
+
+
 /* Suggestion label styling (same as Dihifier) */
 label {
     font-family: "Quicksand", sans-serif;
@@ -152,6 +186,104 @@ label {
 
 
 
+#play-selected {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4f8cff, #1e5ed9);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#play-selected:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #5f9cff, #2d6df0);
+}
+
+
+
+#selection-mode {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ff7b6b, #ff4c4c); /* red */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#selection-mode.active {
+    background: linear-gradient(135deg, #6bff95, #2ee677); /* green */
+}
+
+#selection-mode:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+#selection-mode-center-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 999999;
+}
+
+
+
+
+
+.top-button-row {
+    display: flex;
+    justify-content: space-between; /* left button and right button */
+    align-items: center; /* same Y alignment */
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+
+.menu-btn {
+    width: 100px;          /* make width & height equal */
+    height: 100px;
+    border-radius: 50%;   /* makes it circular */
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+.menu-btn:hover {
+    transform: translateY(-2px);
+}
+.menu-btn:active {
+    transform: translateY(0);
+}
+
 
 
 .sound-btn {
@@ -175,6 +307,19 @@ label {
     transform: translateY(0);
 }
 
+.sound-btn.selectable {
+    border: 3px solid #0fb124; /* light green */
+    box-shadow: 0 0 8px #7CFC0066; /* light green with some transparency */
+}
+
+.sound-btn.selected {
+    background: linear-gradient(135deg, #3fe67b, #1f9d4a) !important;
+    color: white !important;
+    border-color: #1f9d4a !important;
+    outline: 3px solid #00a86b; /* jade green */
+    outline-offset: 3px;
+}
+
 
 
 .red-btn {
@@ -186,10 +331,10 @@ label {
 
 
 .green-btn {
-    background: linear-gradient(135deg, #6bff95, #2ee677);
+    background: linear-gradient(135deg, #00c283, #009e6a);
 }
 .green-btn:hover {
-    background: linear-gradient(135deg, #7bff9f, #3ef687);
+    background: linear-gradient(135deg, #00d892, #00b378);
 }
 
 
@@ -240,4 +385,21 @@ label {
 }
 .gray-btn:hover {
     background: linear-gradient(135deg, #b0b0b0, #808080);
+}
+
+
+.black-btn {
+    background: linear-gradient(135deg, #3a3a3a, #000000);
+    color: red;
+}
+.black-btn:hover {
+    background: linear-gradient(135deg, #4a4a4a, #111111);
+}
+
+
+.orangebrown-btn {
+    background: linear-gradient(135deg, #d2781c, #8a4a00);
+}
+.orangebrown-btn:hover {
+    background: linear-gradient(135deg, #e88924, #9c5500);
 }
