@@ -10,7 +10,7 @@ import {
 // -----------------------------
 // CONFIG
 // -----------------------------
-const COOLDOWN = 60 * 1000; // 1 minute in milliseconds
+const COOLDOWN = 60 * 1000; // 1 minute
 const MAX_LENGTH = 30;
 
 // -----------------------------
@@ -19,14 +19,24 @@ const MAX_LENGTH = 30;
 const sendBtn = document.getElementById("sendSuggestionBtn");
 const suggestionInput = document.getElementById("suggestionInput");
 const suggestionsList = document.getElementById("suggestions-list");
+
 const selectionModeBtn = document.getElementById("selection-mode");
 const playSelectedBtn = document.getElementById("play-selected");
 const stopBtn = document.getElementById("stop-all-sounds");
 const selectionMessage = document.getElementById("selection-mode-center-message");
 
+// Audio controls
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeValue = document.getElementById("volumeValue");
+const resetVolumeBtn = document.getElementById("resetVolumeBtn");
 
+const speedSlider = document.getElementById("speedSlider");
+const speedValue = document.getElementById("speedValue");
+const resetSpeedBtn = document.getElementById("resetSpeed");
+
+// -----------------------------
+// AUDIO CONTEXT & NODES
+// -----------------------------
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 const compressor = audioCtx.createDynamicsCompressor();
@@ -46,60 +56,22 @@ limiter.release.value = 0.05;
 const gainNode = audioCtx.createGain();
 gainNode.gain.value = 1.0;
 
-
-let globalVolume = 1.0; // default 1x (100%)
-
-// -----------------------------
-// FIREBASE SUGGESTIONS
-// -----------------------------
-sendBtn.addEventListener("click", async () => {
-    const text = suggestionInput.value.trim();
-    if (!text) return alert("Please enter a suggestion!");
-    if (text.length > MAX_LENGTH) return alert(`Suggestion is too long! (Max ${MAX_LENGTH} characters)`);
-
-    if (!confirm("Joke suggestions such as random text will be deleted and not taken. By proceeding, you confirm that this is a valid suggestion.")) return;
-
-    try {
-        const userDocRef = doc(db, "userCooldowns", auth.currentUser.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        const now = Date.now();
-
-        if (userDocSnap.exists()) {
-            const lastTime = userDocSnap.data().lastSuggestion || 0;
-            const timeLeft = COOLDOWN - (now - lastTime);
-            if (timeLeft > 0) return alert(`Please wait ${Math.ceil(timeLeft / 1000)} more seconds before submitting another suggestion.`);
-        }
-
-        await addDoc(collection(db, "suggestions"), {
-            text,
-            timestamp: serverTimestamp(),
-            uid: auth.currentUser.uid
-        });
-
-        await setDoc(userDocRef, { lastSuggestion: now });
-        alert("Suggestion submitted!");
-        suggestionInput.value = "";
-
-    } catch (err) {
-        console.error(err);
-        alert("Error submitting suggestion.");
-    }
-});
-
-const suggestionsRef = collection(db, "suggestions");
-const suggestionsQuery = query(suggestionsRef, orderBy("timestamp", "desc"));
-
-onSnapshot(suggestionsQuery, (snapshot) => {
-    suggestionsList.innerHTML = "";
-    snapshot.forEach((doc) => {
-        const li = document.createElement("li");
-        li.textContent = doc.data().text;
-        suggestionsList.appendChild(li);
-    });
-});
+compressor.connect(limiter);
+limiter.connect(gainNode);
+gainNode.connect(audioCtx.destination);
 
 // -----------------------------
-// SOUND SYSTEM
+// GLOBAL CONTROL STATE
+// -----------------------------
+let globalVolume = 1.0; // 1.0 == 100%
+let globalSpeed = 1.0;  // 1.0 == normal
+
+// Update initial UI
+volumeValue.textContent = `Volume: ${Math.round(globalVolume * 100)}%`;
+speedValue.textContent = `${globalSpeed.toFixed(2)}×`;
+
+// -----------------------------
+// SOUND FILES
 // -----------------------------
 const sounds = {
     "actually-good-fahhh": "sounds/actually-good-fahhhh-sfx.mp3",
@@ -118,99 +90,119 @@ const sounds = {
     "fart-with-reverb": "sounds/fart-with-reverb.mp3",
     "domer-the-simpsons": "sounds/domer-the-simpsons.mp3",
     "who-invited-this-kid-bruh": "sounds/who-invited-this-kid-bruh.mp3",
-    "why-did-you-redeem-it": "sounds/why-did-you-redeem-it.mp3"
+    "why-did-you-redeem-it": "sounds/why-did-you-redeem-it.mp3",
+    "skibidi-toilet-dop-dop": "sounds/skibidi-toilet-dop-dop.mp3",
+    "annoying-laughter": "sounds/annoying-laughter.mp3",
+    "evil-laughter": "sounds/evil-laughter.mp3"
 };
 
-const playingAudios = [];
+// Buffer cache & active nodes
+const bufferCache = {};
+const activeNodes = [];
 
-function playSound(src) {
-    const audio = new Audio(src);
-    const track = audioCtx.createMediaElementSource(audio);
+// -----------------------------
+// PRELOAD SOUNDS
+// -----------------------------
+async function loadAllBuffers() {
+    await Promise.all(Object.entries(sounds).map(async ([id, url]) => {
+        try {
+            const resp = await fetch(url);
+            const arrayBuffer = await resp.arrayBuffer();
+            const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+            bufferCache[id] = audioBuffer;
+        } catch (err) {
+            console.warn("Failed to load", url, err);
+        }
+    }));
+}
+loadAllBuffers();
 
-    // Connect the full pipeline **in order**
-    track.connect(compressor);
-    compressor.connect(limiter);
-    limiter.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+// -----------------------------
+// PLAYBACK HELPERS
+// -----------------------------
+stopBtn.addEventListener("click", stopAllPlaying);
 
-    // Apply volume
-    gainNode.gain.value = globalVolume;
+function playBuffer(buffer, when = 0, playbackRate = 1.0) {
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = playbackRate; // speed controls pitch too
+    source.connect(compressor);
+    source.start(audioCtx.currentTime + when);
+    activeNodes.push(source);
+    source.onended = () => {
+        const idx = activeNodes.indexOf(source);
+        if (idx !== -1) activeNodes.splice(idx, 1);
+    };
+    return source;
+}
 
-    audio.play();
-    playingAudios.push(audio);
+const pendingTimeouts = [];
 
-    // Easter Egg
-    if (src.includes("please-speed-i-need-this")) {
-        const interval = setInterval(() => {
-            if (audio.currentTime >= 6.5 && audio.currentTime <= 8) {
-                document.getElementById("easterEggImage").style.opacity = "1";
-                setTimeout(() => {
-                    document.getElementById("easterEggImage").style.opacity = "0";
-                }, 2000);
-                clearInterval(interval);
-            }
-            if (audio.ended) clearInterval(interval);
-        }, 100);
+function playSoundById(id) {
+    const buffer = bufferCache[id];
+    if (!buffer) return;
+
+    const source = playBuffer(buffer, 0, globalSpeed);
+
+    // If you schedule anything, push to pendingTimeouts
+    if (id === "please-speed-i-need-this") {
+        const t = setTimeout(() => {
+            const el = document.getElementById("easterEggImage");
+            el.style.opacity = "1";
+            setTimeout(() => el.style.opacity = "0", 2000);
+        }, 6.5 / globalSpeed * 1000);
+        pendingTimeouts.push(t);
     }
 }
 
-// Stop all sounds
-stopBtn.addEventListener("click", () => {
-    playingAudios.forEach(a => { a.pause(); a.currentTime = 0; });
-    playingAudios.length = 0;
-});
+function stopAllPlaying() {
+    activeNodes.forEach(node => {
+        try { node.stop && node.stop(); } catch(e) {}
+    });
+    activeNodes.length = 0;
+
+    // Cancel pending easter eggs
+    pendingTimeouts.forEach(t => clearTimeout(t));
+    pendingTimeouts.length = 0;
+}
+
 
 // -----------------------------
-// VOLUME SYSTEM
+// VOLUME / SPEED HANDLERS
 // -----------------------------
-
 volumeSlider.addEventListener("input", () => {
-    globalVolume = volumeSlider.value / 100; // 0.0–5.0
-    volumeValue.textContent = `Volume: ${volumeSlider.value}%`;
-
-    gainNode.gain.value = globalVolume; // this can go beyond 1.0
+    globalVolume = volumeSlider.value / 100;
+    gainNode.gain.value = globalVolume;
+    volumeValue.textContent = `Volume: ${Math.round(globalVolume * 100)}%`;
 });
-
-const resetVolumeBtn = document.getElementById("resetVolumeBtn");
 
 resetVolumeBtn.addEventListener("click", () => {
-    volumeSlider.value = 100;      // reset slider
-    globalVolume = 1.0;            // reset JS value
-    volumeValue.textContent = `Volume: ${volumeSlider.value}%`;
-    gainNode.gain.value = 1.0;     // instantly update actual volume
+    volumeSlider.value = 100;
+    globalVolume = 1.0;
+    gainNode.gain.value = globalVolume;
+    volumeValue.textContent = "Volume: 100%";
 });
 
+speedSlider.addEventListener("input", () => {
+    globalSpeed = parseFloat(speedSlider.value);
+    speedValue.textContent = globalSpeed.toFixed(2) + "×";
+});
 
-
+resetSpeedBtn.addEventListener("click", () => {
+    speedSlider.value = 1.0;
+    globalSpeed = 1.0;
+    speedValue.textContent = "1.00×";
+});
 
 // -----------------------------
-// SELECTION SYSTEM
+// SELECTION MODE
 // -----------------------------
 let selectionMode = false;
 let selectedButtons = new Set();
 
-// Selection handler
-function selectionHandler(e) {
-    const btn = e.currentTarget;
-    const btnId = btn.id;
-
-    if (selectionMode) {
-        e.preventDefault();
-        e.stopPropagation();
-        btn.classList.toggle("selected");
-        if (btn.classList.contains("selected")) selectedButtons.add(btnId);
-        else selectedButtons.delete(btnId);
-    } else {
-        playSound(sounds[btnId]);
-    }
-}
-
-// Enable selection mode (add outline)
 function enableSelectionMode() {
     selectedButtons.clear();
-    document.querySelectorAll(".sound-grid .sound-btn").forEach(btn => {
-        btn.classList.add("selectable");
-    });
+    document.querySelectorAll(".sound-grid .sound-btn").forEach(btn => btn.classList.add("selectable"));
 }
 
 function disableSelectionMode() {
@@ -221,68 +213,94 @@ function disableSelectionMode() {
     });
 }
 
-// Toggle selection mode
 selectionModeBtn.addEventListener("click", () => {
     selectionMode = !selectionMode;
     selectionModeBtn.classList.toggle("active");
-
     if (selectionMode) {
         selectionModeBtn.textContent = "Selection Mode: ON";
         enableSelectionMode();
         showCenterMessage("Selection Mode Enabled");
     } else {
         selectionModeBtn.textContent = "Selection Mode: OFF";
-        selectedButtons.clear();
         disableSelectionMode();
         showCenterMessage("Selection Mode Disabled");
     }
 });
 
-// Handle button clicks
 document.querySelectorAll(".sound-btn").forEach(btn => {
     btn.addEventListener("click", e => {
-        const btnId = btn.id;
-
+        const id = btn.id;
         if (selectionMode) {
             e.preventDefault();
-            e.stopPropagation();
             btn.classList.toggle("selected");
-            if (btn.classList.contains("selected")) selectedButtons.add(btnId);
-            else selectedButtons.delete(btnId);
+            if (btn.classList.contains("selected")) selectedButtons.add(id);
+            else selectedButtons.delete(id);
         } else {
-            // Easter Egg special
-            if (btnId === "please-speed-i-need-this") {
-                const audio = new Audio("sounds/please-speed-i-need-this.mp3");
-                audio.play();
-                playingAudios.push(audio);
-
-                const interval = setInterval(() => {
-                    if (audio.currentTime >= 6.5 && audio.currentTime <= 8) {
-                        document.getElementById("easterEggImage").style.opacity = "1";
-                        setTimeout(() => document.getElementById("easterEggImage").style.opacity = "0", 2000);
-                        clearInterval(interval);
-                    }
-                    if (audio.ended) clearInterval(interval);
-                }, 100);
-            } else {
-                playSound(sounds[btnId]);
-            }
+            playSoundById(id);
         }
     });
 });
 
-// Play selected sounds
 playSelectedBtn.addEventListener("click", () => {
     if (!selectionMode) return showCenterMessage("Enable Selection Mode First");
     if (selectedButtons.size === 0) return showCenterMessage("No Sounds Selected");
 
-    selectedButtons.forEach(id => playSound(sounds[id]));
+    selectedButtons.forEach(id => playSoundById(id));
     showCenterMessage("Playing Selected Sounds");
+
 });
 
-// Fade-out center message
+// -----------------------------
+// SUGGESTION SYSTEM (Firebase)
+// -----------------------------
+sendBtn.addEventListener("click", async () => {
+    const text = suggestionInput.value.trim();
+    if (!text) return alert("Please enter a suggestion!");
+    if (text.length > MAX_LENGTH) return alert(`Suggestion too long (max ${MAX_LENGTH})`);
+    if (!confirm("Confirm this is a valid suggestion.")) return;
+
+    try {
+        const userDocRef = doc(db, "userCooldowns", auth.currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        const now = Date.now();
+
+        if (userDocSnap.exists()) {
+            const last = userDocSnap.data().lastSuggestion || 0;
+            const wait = COOLDOWN - (now - last);
+            if (wait > 0) return alert(`Wait ${Math.ceil(wait/1000)}s before submitting again.`);
+        }
+
+        await addDoc(collection(db, "suggestions"), {
+            text,
+            timestamp: serverTimestamp(),
+            uid: auth.currentUser.uid
+        });
+        await setDoc(userDocRef, { lastSuggestion: now });
+
+        alert("Suggestion submitted!");
+        suggestionInput.value = "";
+    } catch (err) {
+        console.error(err);
+        alert("Error submitting suggestion.");
+    }
+});
+
+const suggestionsRef = collection(db, "suggestions");
+const suggestionsQuery = query(suggestionsRef, orderBy("timestamp", "desc"));
+onSnapshot(suggestionsQuery, snapshot => {
+    suggestionsList.innerHTML = "";
+    snapshot.forEach(doc => {
+        const li = document.createElement("li");
+        li.textContent = doc.data().text;
+        suggestionsList.appendChild(li);
+    });
+});
+
+// -----------------------------
+// UTILITY: CENTER MESSAGE
+// -----------------------------
 function showCenterMessage(text) {
     selectionMessage.textContent = text;
     selectionMessage.style.opacity = "1";
-    setTimeout(() => { selectionMessage.style.opacity = "0"; }, 1500);
+    setTimeout(() => selectionMessage.style.opacity = "0", 1500);
 }

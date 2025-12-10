@@ -84,7 +84,11 @@
     width: 300px;
 }
 
-.reset-volume {
+#speedSlider {
+    width: 300px;
+}
+
+.reset-audio-edits {
     padding: 10px 18px;    /* bigger clickable area */
     font-size: 16px;       /* larger text */
     margin-left: 10px;
@@ -95,7 +99,7 @@
     border: none;
 }
 
-.reset-volume:hover {
+.reset-audio-edits:hover {
     background: #d9362c;
 }
 
@@ -106,6 +110,35 @@
     gap: 6px;               /* space between label & slider */
 }
 
+/* === AUDIO CONTROL SLIDERS (Volume, Pitch, Speed) === */
+.audio-control-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* space between label and slider */
+    margin: 8px 0;
+    font-family: "Quicksand", sans-serif;
+}
+
+.audio-control-row span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3d7b;
+    width: 160px;           /* clean aligned width */
+    text-align: right;
+}
+
+/* Smaller, cleaner sliders */
+.audio-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 220px;           /* smaller width */
+    height: 6px;            /* thinner track */
+    border-radius: 5px;
+    background: #d0d6e0;
+    outline: none;
+    transition: 0.2s ease;
+}
 
 
 
