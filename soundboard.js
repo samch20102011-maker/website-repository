@@ -93,7 +93,14 @@ const sounds = {
     "why-did-you-redeem-it": "sounds/why-did-you-redeem-it.mp3",
     "skibidi-toilet-dop-dop": "sounds/skibidi-toilet-dop-dop.mp3",
     "annoying-laughter": "sounds/annoying-laughter.mp3",
-    "evil-laughter": "sounds/evil-laughter.mp3"
+    "evil-laughter": "sounds/evil-laughter.mp3",
+    "christmas-ronaldo-siuuu": "sounds/christmas-ronaldo-siuuu.mp3",
+    "dog-heck-nah": "sounds/dog-heck-nah.mp3",
+    "fire-in-the-hole-geometry-dash": "sounds/fire-in-the-hole-geometry-dash.mp3",
+    "minecraft-eating-sound": "sounds/minecraft-eating-sound.mp3",
+    "oh-hell-naw": "sounds/oh-hell-naw-vine.mp3",
+    "rickroll-meme": "sounds/rickroll-meme.mp3",
+    "woman-screaming": "sounds/woman-screaming.mp3",
 };
 
 // Buffer cache & active nodes
@@ -257,7 +264,7 @@ sendBtn.addEventListener("click", async () => {
     const text = suggestionInput.value.trim();
     if (!text) return alert("Please enter a suggestion!");
     if (text.length > MAX_LENGTH) return alert(`Suggestion too long (max ${MAX_LENGTH})`);
-    if (!confirm("Confirm this is a valid suggestion.")) return;
+    if (!confirm("Joke suggestions will be deleted and not taken. By proceeding, you confirm that this is a valid suggestion.")) return;
 
     try {
         const userDocRef = doc(db, "userCooldowns", auth.currentUser.uid);
