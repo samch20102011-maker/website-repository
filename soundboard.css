@@ -53,7 +53,6 @@
   position: absolute;
   top: -12px;        /* Move text above button */
   left: 6%;
-  transform: translateX(-50%);
   transform: translateY(-50%);
   font-size: 18px;
   font-family: "Quicksand", sans-serif;
@@ -298,7 +297,54 @@ label {
     box-shadow: 0 6px 14px rgba(0,0,0,0.2);
 }
 
+
+
+
+#loop-mode {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #3fa75f, #21873a); /* green */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    margin-bottom: 10px; /* spacing from bottom button */
+}
+
+#loop-mode:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+
+
+
+
+
+
+
 #selection-mode-center-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 999999;
+}
+
+
+#loop-mode-center-message {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -349,6 +395,12 @@ label {
 .menu-btn:active {
     transform: translateY(0);
 }
+
+
+
+
+
+
 
 
 
@@ -445,7 +497,12 @@ label {
     background: linear-gradient(135deg, #ffaf7b, #ff873e);
 }
 
-
+.lightgray-btn {
+    background: linear-gradient(135deg, #d4d4d4, #a8a8a8);
+}
+.lightgray-btn:hover {
+    background: linear-gradient(135deg, #e0e0e0, #b5b5b5);
+}
 
 .gray-btn {
     background: linear-gradient(135deg, #a0a0a0, #707070);
@@ -474,49 +531,46 @@ label {
 
 .christmas-btn {
     width: 100px;
-    height: 120px; /* space for triangle + trunk */
-    position: relative;
+    height: 100px;
+    border-radius: 50%;
     cursor: pointer;
-    background: none;
 
-    color: #ff4c4ce1;
+    background: linear-gradient(135deg, #2ecc71, #1fa85f); /* green circle */
+    border: none;
+    position: relative;
+
+    color: #e03333;
     font-size: 16px;
     font-weight: 600;
-    text-align: center;
-    line-height: normal; /* vertically shifts text inside */
-}
-    .christmas-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 50px solid transparent;
-    border-right: 50px solid transparent;
-    border-bottom: 80px solid #2ecc71;
-}
-
-/* Tree trunk */
-.christmas-btn::after {
-    content: "";
-    position: absolute;
-    top: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 26px;
-    height: 22px;
-    background: linear-gradient(135deg, #9b6a3c, #5c3a1e);
-    border-radius: 4px;
-}
-
-/* Hover effect */
-.christmas-btn:hover::before {
-    border-bottom-color: #3eea86;
-}
-
-.christmas-btn > * {
     z-index: 1;
-    transform: translateY(-10%)
+}
+
+/* THE WREATH ("the jacket") */
+.christmas-btn::before {
+    content: "";
+    position: absolute;
+    inset: -6px;               /* slightly bigger than button */
+    border-radius: 50%;
+    background-image: url('sounds/christmas-wreath.png');
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;      /* clicking still works */
+    z-index: 2;                /* wreath above the button */
+}
+
+/* TEXT MUST BE ON TOP */
+.christmas-btn span {
+    position: relative;
+    z-index: 3; /* above wreath */
+}
+
+.christmas-btn:hover {
+    background: linear-gradient(135deg, #3eea86, #28c46f);
+}
+
+.electric-btn {
+    background: linear-gradient(135deg, #9b4dff, #3e7bff); /* purple → blue */
+}
+.electric-btn:hover {
+    background: linear-gradient(135deg, #b066ff, #5891ff); /* brighter electric */
 }
