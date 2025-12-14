@@ -6,6 +6,77 @@
     font-family: "Quicksand", sans-serif;
 }
 
+
+.sound-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;       /* space between label and dropdown */
+  margin-bottom: 12px;
+}
+
+.filter-label {
+  font-weight: bold;
+  color: #000000;    /* you can adjust depending on your box background */
+  font-size: 20px;
+  font-family: "Quicksand", sans-serif;
+}
+
+#categoryFilter {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background-color: white;
+}
+
+
+
+
+.sound-box {
+  position: relative;
+  padding: 16px;
+  border-radius: 12px;
+  background: #000000;     /* inner background */
+  z-index: 0;
+}
+
+/* Animated gradient border */
+.sound-box::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #ff1e00,
+    #ff7b00,
+    #ffa600,
+    #ff7300,
+    #ff2600
+  );
+  background-size: 300% 300%;
+  animation: borderFlow 3s linear infinite;
+  z-index: -2;
+
+  filter: blur(1.5px) drop-shadow(0 0 12px #ff7800cc);
+}
+
+/* Mask the center so ONLY the border shows */
+.sound-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, #f0f4ff, #dbe6ff);
+  border-radius: calc(12px - 5px);
+  z-index: -1;
+}
+
+@keyframes borderFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+
 .sound-grid {
     display: flex;
     gap: 15px;       /* space between buttons */
@@ -70,6 +141,10 @@
   pointer-events: none;
   transition: opacity 1s ease;
   z-index: 2;
+}
+
+.sound-btn .easter-egg-text {
+  font-weight: normal;      /* undo bold */
 }
 
 
@@ -514,7 +589,7 @@ label {
 
 .black-btn {
     background: linear-gradient(135deg, #3a3a3a, #000000);
-    color: red;
+    color: #ff0000;
 }
 .black-btn:hover {
     background: linear-gradient(135deg, #4a4a4a, #111111);

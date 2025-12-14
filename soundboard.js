@@ -10,7 +10,7 @@ import {
 // -----------------------------
 // CONFIG
 // -----------------------------
-const COOLDOWN = 60 * 1000; // 1 minute
+const COOLDOWN = 60 * 1000;
 const MAX_LENGTH = 30;
 
 // -----------------------------
@@ -23,7 +23,7 @@ const suggestionsList = document.getElementById("suggestions-list");
 const selectionModeBtn = document.getElementById("selection-mode");
 const playSelectedBtn = document.getElementById("play-selected");
 const stopBtn = document.getElementById("stop-all-sounds");
-const selectionMessage = document.getElementById("selection-mode-center-message");
+const centerMessage = document.getElementById("selection-mode-center-message");
 
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeValue = document.getElementById("volumeValue");
@@ -41,23 +41,17 @@ const loopMessage = document.getElementById("loop-mode-center-message");
 // -----------------------------
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Compressor & limiter
 const compressor = audioCtx.createDynamicsCompressor();
 compressor.threshold.value = -6;
 compressor.knee.value = 20;
 compressor.ratio.value = 2;
-compressor.attack.value = 0.01;
-compressor.release.value = 0.1;
 
 const limiter = audioCtx.createDynamicsCompressor();
 limiter.threshold.value = -3;
-limiter.knee.value = 0;
 limiter.ratio.value = 20;
-limiter.attack.value = 0.001;
-limiter.release.value = 0.05;
 
 const gainNode = audioCtx.createGain();
-gainNode.gain.value = 1.0;
+gainNode.gain.value = 1;
 
 compressor.connect(limiter);
 limiter.connect(gainNode);
@@ -66,23 +60,19 @@ gainNode.connect(audioCtx.destination);
 // -----------------------------
 // GLOBAL STATE
 // -----------------------------
-let globalVolume = 1.0;
-let globalSpeed = 1.0;
+let globalVolume = 1;
+let globalSpeed = 1;
 
 let selectionMode = false;
+let loopMode = false;
 let selectedButtons = new Set();
 
-let loopMode = false;
-let loopTarget = null;
-let loopTimeout = null;
-let currentLoopNode = null;
-
-let bufferCache = {};
-let activeNodes = [];
-let pendingTimeouts = [];
+const bufferCache = {};
+const activeNodes = [];
+const pendingTimeouts = [];
 
 // -----------------------------
-// SOUND FILES
+// SOUNDS
 // -----------------------------
 const sounds = {
   "actually-good-fahhh": "sounds/actually-good-fahhhh-sfx.mp3",
@@ -122,113 +112,102 @@ const sounds = {
 // -----------------------------
 // LOAD BUFFERS
 // -----------------------------
-async function loadAllBuffers() {
-  await Promise.all(Object.entries(sounds).map(async ([id, url]) => {
-    try {
+async function loadBuffers() {
+  await Promise.all(
+    Object.entries(sounds).map(async ([id, url]) => {
       const resp = await fetch(url);
-      const arrayBuffer = await resp.arrayBuffer();
-      bufferCache[id] = await audioCtx.decodeAudioData(arrayBuffer);
-    } catch (err) {
-      console.warn("Failed to load", url, err);
+      const buf = await resp.arrayBuffer();
+      bufferCache[id] = await audioCtx.decodeAudioData(buf);
+    })
+  );
+
+  document.querySelectorAll(".sound-btn").forEach(b => b.disabled = false);
+}
+
+document.querySelectorAll(".sound-btn").forEach(b => b.disabled = true);
+loadBuffers();
+
+// -----------------------------
+// AUDIO ENGINE
+// -----------------------------
+const AudioEngine = {
+  loop: {
+    active: false,
+    id: null,
+    timeout: null,
+    speed: 1
+  },
+
+  play(id, { loop = false } = {}) {
+    const buffer = bufferCache[id];
+    if (!buffer) return;
+
+    if (loop) this.stopLoop();
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.playbackRate.value = globalSpeed;
+    source.connect(compressor);
+    source.start();
+
+    activeNodes.push(source);
+    source.onended = () => {
+      const i = activeNodes.indexOf(source);
+      if (i !== -1) activeNodes.splice(i, 1);
+    };
+
+    this.handleEasterEgg(id, globalSpeed);
+
+    if (loop) {
+      this.loop.active = true;
+      this.loop.id = id;
+      this.loop.speed = globalSpeed;
+
+      const dur = buffer.duration * 1000 / globalSpeed;
+      this.loop.timeout = setTimeout(() => {
+        if (this.loop.active) this.play(id, { loop: true });
+      }, dur);
     }
-  }));
+  },
 
-  document.querySelectorAll(".sound-btn").forEach(btn => btn.disabled = false);
-}
+  stopLoop() {
+    this.loop.active = false;
+    this.loop.id = null;
+    if (this.loop.timeout) clearTimeout(this.loop.timeout);
+    this.loop.timeout = null;
+  },
 
-document.querySelectorAll(".sound-btn").forEach(btn => btn.disabled = true);
-loadAllBuffers();
+  stopAll() {
+    activeNodes.forEach(n => {
+      try { n.stop(); } catch {}
+    });
+    activeNodes.length = 0;
 
-// -----------------------------
-// PLAYBACK HELPERS
-// -----------------------------
-function playBuffer(buffer, playbackRate = 1.0) {
-  const source = audioCtx.createBufferSource();
-  source.buffer = buffer;
-  source.playbackRate.value = playbackRate;
-  source.connect(compressor);
-  source.start();
-  activeNodes.push(source);
-  source.onended = () => {
-    const idx = activeNodes.indexOf(source);
-    if (idx !== -1) activeNodes.splice(idx, 1);
-  };
-  return source;
-}
+    pendingTimeouts.forEach(t => clearTimeout(t));
+    pendingTimeouts.length = 0;
 
-function playSoundById(id) {
-  const buffer = bufferCache[id];
-  if (!buffer) return;
-  playBuffer(buffer, globalSpeed);
-}
+    this.stopLoop();
+  },
 
-function stopAllPlaying() {
-  activeNodes.forEach(node => {
-    try { node.stop(); } catch {}
-  });
-  activeNodes.length = 0;
+  handleEasterEgg(id, speed) {
+    if (id !== "please-speed-i-need-this") return;
 
-  pendingTimeouts.forEach(t => clearTimeout(t));
-  pendingTimeouts.length = 0;
+    const t = setTimeout(() => {
+      const img = document.getElementById("easterEggImage");
+      if (!img) return;
+      img.style.opacity = "1";
+      setTimeout(() => img.style.opacity = "0", 2000);
+    }, 6500 / speed);
 
-  stopLoopingSound();
-}
-
-// -----------------------------
-// LOOP LOGIC (simple: pitch fixed)
-// -----------------------------
-function startLoopingSound(id) {
-  const buffer = bufferCache[id];
-  if (!buffer) return;
-
-  loopTarget = id;
-
-  if (currentLoopNode) {
-    try { currentLoopNode.stop(); } catch {}
-    currentLoopNode = null;
+    pendingTimeouts.push(t);
   }
-  if (loopTimeout) clearTimeout(loopTimeout);
+};
 
-  function loopStep() {
-    if (!loopTarget) return;
-
-    // Play a new node each time at the speed when the loop started
-    currentLoopNode = playBuffer(buffer, globalSpeed);
-
-    // Easter egg for "please-speed-i-need-this"
-    if (id === "please-speed-i-need-this") {
-      const triggerTime = 6500 / globalSpeed; // 6.5 seconds, adjusted by speed
-      const t = setTimeout(() => {
-        const el = document.getElementById("easterEggImage");
-        if (el) {
-          el.style.opacity = "1";
-          setTimeout(() => el.style.opacity = "0", 2000);
-        }
-      }, triggerTime);
-      pendingTimeouts.push(t);
-    }
-
-    // Schedule next iteration using the same pitch/speed
-    loopTimeout = setTimeout(loopStep, buffer.duration * 1000 / globalSpeed);
-  }
-
-  loopStep();
-}
-
-function stopLoopingSound() {
-  loopTarget = null;
-  if (currentLoopNode) {
-    try { currentLoopNode.stop(); } catch {}
-    currentLoopNode = null;
-  }
-  if (loopTimeout) clearTimeout(loopTimeout);
-  loopTimeout = null;
-}
 
 // -----------------------------
-// BUTTON EVENTS
+// UI EVENTS
 // -----------------------------
-stopBtn.addEventListener("click", stopAllPlaying);
+stopBtn.addEventListener("click", () => AudioEngine.stopAll());
 
 volumeSlider.addEventListener("input", () => {
   globalVolume = volumeSlider.value / 100;
@@ -238,8 +217,7 @@ volumeSlider.addEventListener("input", () => {
 
 resetVolumeBtn.addEventListener("click", () => {
   volumeSlider.value = 100;
-  globalVolume = 1.0;
-  gainNode.gain.value = globalVolume;
+  gainNode.gain.value = 1;
   volumeValue.textContent = "Volume: 100%";
 });
 
@@ -249,70 +227,68 @@ speedSlider.addEventListener("input", () => {
 });
 
 resetSpeedBtn.addEventListener("click", () => {
-  speedSlider.value = 1.0;
-  globalSpeed = 1.0;
+  speedSlider.value = 1;
+  globalSpeed = 1;
   speedValue.textContent = "1.00×";
 });
 
-// Selection mode
+// -----------------------------
+// MODES
+// -----------------------------
 selectionModeBtn.addEventListener("click", () => {
   selectionMode = !selectionMode;
-  selectionModeBtn.classList.toggle("active");
-  if (selectionMode) {
-    selectionModeBtn.textContent = "Selection Mode: ON";
-    selectedButtons.clear();
-    document.querySelectorAll(".sound-btn").forEach(btn => btn.classList.add("selectable"));
-    showCenterMessage("Selection Mode Enabled");
-  } else {
-    selectionModeBtn.textContent = "Selection Mode: OFF";
-    document.querySelectorAll(".sound-btn").forEach(btn => btn.classList.remove("selectable", "selected"));
-    selectedButtons.clear();
-    showCenterMessage("Selection Mode Disabled");
-  }
+  selectionModeBtn.classList.toggle("active", selectionMode);
+  selectionModeBtn.textContent = `Selection Mode: ${selectionMode ? "ON" : "OFF"}`;
+  selectedButtons.clear();
+
+  document.querySelectorAll(".sound-btn").forEach(btn => {
+    btn.classList.toggle("selectable", selectionMode);
+    btn.classList.remove("selected");
+  });
+
+  showMessage(selectionMode ? "Selection Mode Enabled" : "Selection Mode Disabled");
 });
 
-// Loop mode
 loopModeBtn.addEventListener("click", () => {
   loopMode = !loopMode;
-  if (loopMode) {
-    loopModeBtn.classList.add("active");
-    loopMessage.textContent = "Select a button to loop.";
-    loopMessage.style.opacity = "1";
-  } else {
-    loopModeBtn.classList.remove("active");
-    loopMessage.style.opacity = "0";
-    stopLoopingSound();
-  }
+  loopModeBtn.classList.toggle("active", loopMode);
+  loopMessage.style.opacity = loopMode ? "1" : "0";
+  if (!loopMode) AudioEngine.stopLoop();
 });
 
-// Sound buttons
+// -----------------------------
+// SOUND BUTTONS
+// -----------------------------
 document.querySelectorAll(".sound-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const id = btn.id;
 
     if (selectionMode) {
       btn.classList.toggle("selected");
-      if (btn.classList.contains("selected")) selectedButtons.add(id);
-      else selectedButtons.delete(id);
-    } else if (loopMode) {
-      stopLoopingSound();
-      startLoopingSound(id);
+      btn.classList.contains("selected")
+        ? selectedButtons.add(id)
+        : selectedButtons.delete(id);
+      return;
+    }
+
+    if (loopMode) {
+      AudioEngine.play(id, { loop: true });
       loopMode = false;
       loopModeBtn.classList.remove("active");
       loopMessage.style.opacity = "0";
-    } else {
-      playSoundById(id);
+      return;
     }
+
+    AudioEngine.play(id);
   });
 });
 
-// Play selected
 playSelectedBtn.addEventListener("click", () => {
-  if (!selectionMode) return showCenterMessage("Enable Selection Mode First");
-  if (selectedButtons.size === 0) return showCenterMessage("No Sounds Selected");
+  if (!selectionMode) return showMessage("Enable Selection Mode First");
+  if (!selectedButtons.size) return showMessage("No Sounds Selected");
 
-  selectedButtons.forEach(id => playSoundById(id));
-  showCenterMessage("Playing Selected Sounds");
+  selectedButtons.forEach(id => AudioEngine.play(id));
+  showMessage("Playing Selected Sounds");
 });
 
 // -----------------------------
@@ -342,7 +318,7 @@ sendBtn.addEventListener("click", async () => {
     });
     await setDoc(userDocRef, { lastSuggestion: now });
 
-    alert("Suggestion submitted!");
+    alert("Suggestion submitted! Make sure to check if any feedback is given to your suggestion after a day or so.");
     suggestionInput.value = "";
   } catch (err) {
     console.error(err);
@@ -364,8 +340,27 @@ onSnapshot(suggestionsQuery, snapshot => {
 // -----------------------------
 // CENTER MESSAGE
 // -----------------------------
-function showCenterMessage(text) {
-  selectionMessage.textContent = text;
-  selectionMessage.style.opacity = "1";
-  setTimeout(() => selectionMessage.style.opacity = "0", 1500);
+function showMessage(text) {
+  centerMessage.textContent = text;
+  centerMessage.style.opacity = "1";
+  setTimeout(() => centerMessage.style.opacity = "0", 1500);
 }
+
+// -----------------------------
+// CATEGORY FILTER
+// -----------------------------
+const categoryDropdown = document.getElementById("categoryFilter");
+const soundButtons = document.querySelectorAll(".sound-btn"); // all sound buttons
+
+categoryDropdown.addEventListener("change", () => {
+  const selectedCategory = categoryDropdown.value.toLowerCase();
+  const searchQuery = document.getElementById("soundSearch")?.value.toLowerCase() || "";
+
+  soundButtons.forEach(btn => {
+    const btnCategory = btn.dataset.category?.toLowerCase() || "all";
+    const matchesCategory = selectedCategory === "all" || btnCategory === selectedCategory;
+    const matchesSearch = btn.textContent.toLowerCase().includes(searchQuery);
+
+    btn.style.display = matchesCategory && matchesSearch ? "" : "none";
+  });
+});

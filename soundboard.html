@@ -31,7 +31,7 @@
   </div>
 
   <div class="audio-control-row">
-      <label>Speed/Pitch: <span id="speedValue">1.00</span></label>
+      <label>Speed/Pitch: <span id="speedValue">1.00×</span></label>
       <input type="range" class="audio-slider" id="speedSlider" min="0.5" max="2.0" step="0.01" value="1.0">
       <button class="reset-audio-edits" id="resetSpeed">Reset</button>
   </div>
@@ -39,60 +39,72 @@
 
 
 
-
+  <br>
 
 
   
   <div id="selection-mode-center-message"></div>
 
-  <div id="loop-mode-center-message">
-    Select the button that you would like to loop.
-  </div>
+  <div id="loop-mode-center-message">Select the button that you would like to loop.</div>
 
 
 
-  <div class="sound-grid">
-    <button class="sound-btn red-btn" id="actually-good-fahhh">ACTUALLY GOOD FAHHH</button>
 
-    <div class="easter-egg-wrapper">
-      <span class="easter-egg-text">easter egg</span>
-      <button class="sound-btn green-btn" id="please-speed-i-need-this">Please Speed I Need This</button>
+  <div class="sound-box">
+    <div class="sound-filter-bar">
+      <span class="filter-label">Filters:</span>
+      <select id="categoryFilter">
+        <option value="all">All Categories</option>
+        <option value="sse">Short Sound Effects</option>
+        <option value="lse">Long Sound Effects</option>
+        <option value="music">Music</option>
+        <option value="random">Random</option>
+      </select>
     </div>
 
-    <button class="sound-btn blue-btn" id="metal-pipe-falling-sound">Metal Pipe Falling Sound</button>
-    <button class="sound-btn brown-btn" id="long-brain-fart">Long brain fart</button>
-    <button class="sound-btn green-btn" id="what-is-this-diddy-blud">WHAT IS THIS DIDDY BLUD</button>
-    <button class="sound-btn red-btn" id="fahhh-pump-sound">fahhh pump sound</button>
-    <button class="sound-btn orange-btn" id="knock-3d">3d knocking on door</button>
-    <button class="sound-btn blue-btn" id="we-are-charlie-kirk">Charlie Kirk</button>
-    <button class="sound-btn orangebrown-btn" id="tung-tung-sahur-song">tung tung sahur</button>
-    <button class="sound-btn yellow-btn" id="wobbly-wiggly">WOBBLY WIGGLY</button>
-    <button class="sound-btn purple-btn" id="brainrot-rap">brainrot rap</button>
-    <button class="sound-btn black-btn" id="high-pitch-sound">high pitch sound</button>
-    <button class="sound-btn brown-btn" id="wet-fart">wet fart</button>
-    <button class="sound-btn brown-btn" id="fart-with-reverb">fart with reverb</button>
-    <button class="sound-btn yellow-btn" id="domer-the-simpsons">domer</button>
-    <button class="sound-btn red-btn" id="who-invited-this-kid-bruh">who invited this kid bruh</button>
-    <button class="sound-btn blue-btn" id="why-did-you-redeem-it">WHY DID YOU REDEEM IT</button>
-    <button class="sound-btn orangebrown-btn" id="skibidi-toilet-dop-dop">skibidi toilet dop dop</button>
-    <button class="sound-btn yellow-btn" id="annoying-laughter">annoying laughter</button>
-    <button class="sound-btn red-btn" id="evil-laughter">evil laughter</button>
-    
-    <button class="sound-btn christmas-btn" id="christmas-ronaldo-siuuu"><span>Siuuu Ronaldo Christmas</span></button>
+    <br>
+    <div class="sound-grid">
+      <button class="sound-btn red-btn" id="actually-good-fahhh" data-category="sse">ACTUALLY GOOD FAHHH</button>
 
-    <button class="sound-btn red-btn" id="dog-heck-nah">dog heck nah</button>
-    <button class="sound-btn blue-btn" id="fire-in-the-hole-geometry-dash">FIRE IN THE HOLE</button>
-    <button class="sound-btn orangebrown-btn" id="minecraft-eating-sound">minecraft eating sound</button>
-    <button class="sound-btn yellow-btn" id="oh-hell-naw">oh hell naw aiwhiaiuaiu</button>
-    <button class="sound-btn blue-btn" id="rickroll-meme">rickroll</button>
-    <button class="sound-btn black-btn" id="woman-screaming">woman screaming</button>
-    <button class="sound-btn yellow-btn" id="mr-krabs-sdiybt">Mr. Krabs SDIYBT</button>
-    <button class="sound-btn orangebrown-btn" id="screaming-lebron">screaming lebron (loud)</button>
-    <button class="sound-btn blue-btn" id="you-are-my-sunshine">you are my sunshine</button>
-    <button class="sound-btn electric-btn" id="velvetal-phonk">Velvetal PHONK</button>
-    <button class="sound-btn lightgray-btn" id="secret-rickroll">secret button</button>
+      <div class="easter-egg-wrapper">
+        <button class="sound-btn green-btn" id="please-speed-i-need-this" data-category="lse" data-easter="true">Please Speed I Need This <span class="easter-egg-text">easter egg</span></button>
+      </div>
+
+      <button class="sound-btn blue-btn" id="metal-pipe-falling-sound" data-category="sse">Metal Pipe Falling Sound</button>
+      <button class="sound-btn brown-btn" id="long-brain-fart" data-category="lse">Long brain fart</button>
+      <button class="sound-btn green-btn" id="what-is-this-diddy-blud" data-category="music">WHAT IS THIS DIDDY BLUD</button>
+      <button class="sound-btn red-btn" id="fahhh-pump-sound" data-category="sse">fahhh pump sound</button>
+      <button class="sound-btn orange-btn" id="knock-3d" data-category="sse">3d knocking on door</button>
+      <button class="sound-btn blue-btn" id="we-are-charlie-kirk" data-category="music">Charlie Kirk</button>
+      <button class="sound-btn orangebrown-btn" id="tung-tung-sahur-song" data-category="music">tung tung sahur</button>
+      <button class="sound-btn yellow-btn" id="wobbly-wiggly" data-category="music">WOBBLY WIGGLY</button>
+      <button class="sound-btn purple-btn" id="brainrot-rap" data-category="music">brainrot rap</button>
+      <button class="sound-btn black-btn" id="high-pitch-sound" data-category="random">high pitch sound</button>
+      <button class="sound-btn brown-btn" id="wet-fart" data-category="sse">wet fart</button>
+      <button class="sound-btn brown-btn" id="fart-with-reverb" data-category="sse">fart with reverb</button>
+      <button class="sound-btn yellow-btn" id="domer-the-simpsons" data-category="sse">domer</button>
+      <button class="sound-btn red-btn" id="who-invited-this-kid-bruh" data-category="lse">who invited this kid bruh</button>
+      <button class="sound-btn blue-btn" id="why-did-you-redeem-it" data-category="lse">WHY DID YOU REDEEM IT</button>
+      <button class="sound-btn orangebrown-btn" id="skibidi-toilet-dop-dop" data-category="music">skibidi toilet dop dop</button>
+      <button class="sound-btn yellow-btn" id="annoying-laughter" data-category="sse">annoying laughter</button>
+      <button class="sound-btn red-btn" id="evil-laughter" data-category="sse">evil laughter</button>
+      
+      <button class="sound-btn christmas-btn" id="christmas-ronaldo-siuuu" data-category="music"><span>Siuuu Ronaldo Christmas</span></button>
+
+      <button class="sound-btn red-btn" id="dog-heck-nah" data-category="sse">dog heck nah</button>
+      <button class="sound-btn blue-btn" id="fire-in-the-hole-geometry-dash" data-category="sse">FIRE IN THE HOLE</button>
+      <button class="sound-btn orangebrown-btn" id="minecraft-eating-sound" data-category="sse">minecraft eating sound</button>
+      <button class="sound-btn yellow-btn" id="oh-hell-naw" data-category="sse">oh hell naw aiwhiaiuaiu</button>
+      <button class="sound-btn blue-btn" id="rickroll-meme" data-category="music">rickroll</button>
+      <button class="sound-btn black-btn" id="woman-screaming" data-category="sse">woman screaming</button>
+      <button class="sound-btn yellow-btn" id="mr-krabs-sdiybt" data-category="lse">Mr. Krabs SDIYBT</button>
+      <button class="sound-btn orangebrown-btn" id="screaming-lebron" data-category="sse">screaming lebron (loud)</button>
+      <button class="sound-btn blue-btn" id="you-are-my-sunshine" data-category="music">you are my sunshine</button>
+      <button class="sound-btn electric-btn" id="velvetal-phonk" data-category="music">Velvetal PHONK</button>
+      <button class="sound-btn lightgray-btn" id="secret-rickroll" data-category="random">secret button</button>
 
 
+    </div>
   </div>
   
   <br><br>
