@@ -11,7 +11,7 @@ import {
 // CONFIG
 // -----------------------------
 const COOLDOWN = 60 * 1000;
-const MAX_LENGTH = 30;
+const MAX_LENGTH = 150;
 
 // -----------------------------
 // ELEMENTS
@@ -107,6 +107,19 @@ const sounds = {
   "screaming-lebron": "sounds/screaming-lebron.mp3",
   "you-are-my-sunshine": "sounds/you-are-my-sunshine.mp3",
   "velvetal-phonk": "sounds/velvetal-phonk.mp3",
+  "montagem-bailao": "sounds/montagem-bailao.mp3",
+  "montagem-rugada": "sounds/montagem-rugada.mp3",
+  "montagem-xonada": "sounds/montagem-xonada.mp3",
+  "ankara-messi": "sounds/ankara-messi.mp3",
+  "brr-brr-patapim-phonk": "sounds/brr-brr-patapim-phonk.mp3",
+  "get-out-song": "sounds/get-out-song.mp3",
+  "italian-brainrot-song": "sounds/italian-brainrot-song.mp3",
+  "meow-meow-song": "sounds/meow-meow-song.mp3",
+  "neymar-theme-song": "sounds/neymar-theme-song.mp3",
+  "sixseven-sound": "sounds/sixseven-sound.mp3",
+  "vai-vai-trair-phonk": "sounds/vai-vai-trair-phonk.mp3",
+  "thefatrat-unity": "sounds/thefatrat-unity.mp3",
+  "skibidi-toilet-will-be-mine": "sounds/skibidi-toilet-will-be-mine.mp3",
 };
 
 // -----------------------------
