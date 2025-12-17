@@ -124,7 +124,7 @@
 
 .easter-egg-text {
   position: absolute;
-  top: -12px;        /* Move text above button */
+  top: -7px;        /* Move text above button */
   left: 6%;
   transform: translateY(-50%);
   font-size: 18px;

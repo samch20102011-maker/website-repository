@@ -120,6 +120,12 @@ const sounds = {
   "vai-vai-trair-phonk": "sounds/vai-vai-trair-phonk.mp3",
   "thefatrat-unity": "sounds/thefatrat-unity.mp3",
   "skibidi-toilet-will-be-mine": "sounds/skibidi-toilet-will-be-mine.mp3",
+  "please-speed-i-need-this-long": "sounds/please-speed-i-need-this-long.mp3",
+  "slay-phonk": "sounds/slay-phonk.mp3",
+  "sugarcrash-song": "sounds/sugarcrash-song.mp3",
+  "eeya-eeya": "sounds/eeya-eeya.mp3",
+  "speed-say-wallahi-bro": "sounds/speed-say-wallahi-bro.mp3",
+
 };
 
 // -----------------------------
@@ -203,7 +209,7 @@ const AudioEngine = {
   },
 
   handleEasterEgg(id, speed) {
-    if (id !== "please-speed-i-need-this") return;
+    if (id !== "please-speed-i-need-this" && id !== "please-speed-i-need-this-long") return;
 
     const t = setTimeout(() => {
       const img = document.getElementById("easterEggImage");
