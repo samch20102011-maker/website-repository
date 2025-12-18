@@ -125,6 +125,14 @@ const sounds = {
   "sugarcrash-song": "sounds/sugarcrash-song.mp3",
   "eeya-eeya": "sounds/eeya-eeya.mp3",
   "speed-say-wallahi-bro": "sounds/speed-say-wallahi-bro.mp3",
+  "back-on-track-gd": "sounds/back-on-track-gd.mp3",
+  "im-making-mac-and-cheese": "sounds/im-making-mac-and-cheese.mp3",
+  "ransom-song": "sounds/ransom-song.mp3",
+  "tequila-phonk": "sounds/tequila-phonk.mp3",
+  "thefatrat-jackpot": "sounds/thefatrat-jackpot.mp3",
+  "thefatrat-xenogenesis": "sounds/thefatrat-xenogenesis.mp3",
+  "uh-oh-stinky": "sounds/uh-oh-stinky.mp3",
+
 
 };
 
