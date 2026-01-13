@@ -438,6 +438,22 @@ label {
     z-index: 999999;
 }
 
+#download-mode-center-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 999999;
+}
 
 
 
@@ -465,6 +481,7 @@ label {
     align-items: center;
     justify-content: center;
     transition: 0.2s ease;
+    margin-bottom: 6px;
 }
 .menu-btn:hover {
     transform: translateY(-2px);
@@ -650,4 +667,11 @@ label {
 }
 .electric-btn:hover {
     background: linear-gradient(135deg, #b066ff, #5891ff); /* brighter electric */
+}
+
+.cyan-btn {
+    background: linear-gradient(135deg, #4fd1ff, #00bcd4);
+}
+.cyan-btn:hover {
+    background: linear-gradient(135deg, #6bdcff, #1ac6dc);
 }

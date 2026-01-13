@@ -65,6 +65,8 @@ let globalSpeed = 1;
 
 let selectionMode = false;
 let loopMode = false;
+let downloadMode = false;
+const downloadMessage = document.getElementById("download-mode-center-message");
 let selectedButtons = new Set();
 
 const bufferCache = {};
@@ -306,6 +308,14 @@ document.querySelectorAll(".sound-btn").forEach(btn => {
       return;
     }
 
+    if (downloadMode) {
+      downloadSound(id);
+      downloadMode = false;                       // turn off after one click
+      downloadModeBtn.classList.remove("active"); // update button UI
+      downloadMessage.style.opacity = "0";        // hide message
+      return;
+    }
+
     AudioEngine.play(id);
   });
 });
@@ -316,6 +326,29 @@ playSelectedBtn.addEventListener("click", () => {
 
   selectedButtons.forEach(id => AudioEngine.play(id));
   showMessage("Playing Selected Sounds");
+});
+
+// -----------------------------
+// DOWNLOAD MODE
+// -----------------------------
+function downloadSound(id) {
+  const url = sounds[id];
+  if (!url) return;
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = url.split("/").pop();
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+const downloadModeBtn = document.getElementById("download-mode");
+
+downloadModeBtn.addEventListener("click", () => {
+  downloadMode = !downloadMode;
+  downloadModeBtn.classList.toggle("active", downloadMode);
+  downloadMessage.style.opacity = downloadMode ? "1" : "0";
 });
 
 // -----------------------------
