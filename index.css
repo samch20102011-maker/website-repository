@@ -1,4 +1,4 @@
-#soundboardbutton {
+.homepagebutton {
     padding: 12px 20px;
     background: linear-gradient(135deg, #4f8cff, #1e5ed9);
     color: rgb(255, 255, 255);
@@ -9,15 +9,16 @@
     cursor: pointer;
     transition: 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    margin-right: 6px;
 }
 
-#soundboardbutton:hover {
+.homepagebutton:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0,0,0,0.2);
     background: linear-gradient(135deg, #5f9cff, #2d6df0);
 }
 
-#soundboardbutton:active {
+.homepagebutton:active {
     transform: translateY(0px);
     box-shadow: 0 3px 7px rgba(0,0,0,0.15);
 }
