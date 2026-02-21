@@ -1,7 +1,7 @@
 // -----------------------------
 // FIREBASE SETUP
 // -----------------------------
-import { db, auth } from "../firebase-setup.js";
+import { db, auth } from "./firebase-setup.js";
 import {
   collection, addDoc, serverTimestamp, query, orderBy, onSnapshot,
   doc, getDoc, setDoc
